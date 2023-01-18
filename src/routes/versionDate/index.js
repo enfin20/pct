@@ -8,8 +8,6 @@ export async function get(request) {
     const collection = db.collection("VersionDate");
     const version = await collection.find().toArray();
 
-    console.info("version date:", version);
-
     return {
       status: 200,
       body: {
@@ -58,7 +56,6 @@ export async function put(request) {
     const dbConnection = await connectToDatabase();
     const db = dbConnection.db;
     const collection = db.collection("VersionDate");
-    console.log("version " + version.date);
 
     await collection.updateOne(
       { _id: ObjectId(version._id) },

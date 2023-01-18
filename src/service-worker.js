@@ -1,6 +1,6 @@
 import { build, files } from "$service-worker";
 // Create a unique cache name for this deployment
-const CACHE = `cache-198`;
+const CACHE = `cache-pctV1`;
 const ASSETS = [
   ...build, // the app itself
   ...files, // everything in `static`
