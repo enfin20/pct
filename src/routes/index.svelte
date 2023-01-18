@@ -376,25 +376,6 @@
       console.log("IndexedDB --> MongoDB");
       var obj = new Object();
 
-      // récupération de tous les types
-      categoryTypes = await getIDBTypes();
-      obj._id = 0; // pour supprimer tous les éléments
-      res = await fetch("/categoryTypes", {
-        method: "DELETE",
-        body: JSON.stringify(obj),
-      });
-      erreurMessageRG = res.erreur;
-      for (var i = 0; i < categoryTypes.length; i++) {
-        categoryTypes[i]._id = categoryTypes[i].type;
-        obj = new Object();
-        obj.type = categoryTypes[i].type;
-
-        res = await fetch("/categoryTypes", {
-          method: "POST",
-          body: JSON.stringify(obj),
-        });
-      }
-
       // récupération de tous les categories
       categories = await getIDBCategories();
       obj = new Object();
@@ -410,6 +391,25 @@
         obj.type = categories[i].type;
 
         res = await fetch("/categories", {
+          method: "POST",
+          body: JSON.stringify(obj),
+        });
+      }
+
+      // récupération de tous les types
+      categoryTypes = await getIDBTypes();
+      obj = new Object();
+      obj._id = 0; // pour supprimer tous les éléments
+      res = await fetch("/categoryTypes", {
+        method: "DELETE",
+        body: JSON.stringify(obj),
+      });
+      for (var i = 0; i < categoryTypes.length; i++) {
+        categoryTypes[i]._id = categoryTypes[i].type;
+        obj = new Object();
+        obj.type = categoryTypes[i].type;
+
+        res = await fetch("/categoryTypes", {
           method: "POST",
           body: JSON.stringify(obj),
         });
