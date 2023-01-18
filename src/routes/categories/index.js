@@ -31,7 +31,7 @@ export async function post(request) {
     const collection = db.collection("Categories");
     const categories = JSON.parse(request.body);
 
-    t = await collection.insertOne(categories);
+    let t = await collection.insertOne(categories);
 
     return {
       status: 200,

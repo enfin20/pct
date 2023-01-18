@@ -33,7 +33,7 @@ export async function post(request) {
     const expenses = JSON.parse(request.body);
 
     expenses.amount = Double(expenses.amount);
-    t = await collection.insertOne(expenses);
+    let t = await collection.insertOne(expenses);
     console.log("insert " + expenses._id);
     return {
       status: 200,

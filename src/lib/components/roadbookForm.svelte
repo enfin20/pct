@@ -152,7 +152,7 @@
     edit_Day.difficulty = Number(edit_Day.difficulty);
     edit_Day.night = Number(edit_Day.night);
     edit_Day.landscape = Number(edit_Day.landscape);
-
+    console.info("edit_Day:", edit_Day);
     if (edit_Day._id === "") {
       // Insert new day
       if (sourceDB === "MDB") {

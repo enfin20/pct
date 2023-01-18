@@ -15,8 +15,8 @@ export async function getIDBDate() {
 
   let vIDB = await IDB.VersionDate.toArray();
   try {
-    //return vIDB[0].date;
-    return "20230112";
+    return vIDB[0].date;
+    //   return "20230112";
   } catch {
     return initIDBDate();
   }

@@ -32,7 +32,7 @@ export async function post(request) {
     const collection = db.collection("Types");
     const categoryTypes = JSON.parse(request.body);
 
-    t = await collection.insertOne(categoryTypes);
+    let t = await collection.insertOne(categoryTypes);
 
     return {
       status: 200,
@@ -41,6 +41,7 @@ export async function post(request) {
       },
     };
   } catch (err) {
+    console.info("err:", err);
     return {
       status: 500,
       body: {

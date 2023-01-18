@@ -185,24 +185,32 @@
     expenses = [];
     roadbook = [];
     let IDB_id = "";
-    // récupération de la version MongoDB
-    let res = await fetch("/versionDate");
-    const ver = await res.json();
-    if (res.status === 500) {
-      // réseau KO
-      erreurMessageRG = "synchData (versionDate) : " + +ver.erreur;
+    let res = [];
+
+    try {
+      // récupération de la version MongoDB
+      res = await fetch("/versionDate");
+      const ver = await res.json();
+      console.info("ver :", ver);
+      if (res.status === 500) {
+        // réseau KO
+        versionMongoDB = "";
+        //        erreurMessageRG = "synchData (versionDate) : " + ver.erreur;
+        erreurMessageRG = "Pas de connexion à la base";
+      } else {
+        // réseau OK
+        versionMongoDB = await ver.version[0].date;
+        console.info("version MongoDB :", versionMongoDB);
+      }
+    } catch {
       versionMongoDB = "";
-    } else {
-      // réseau OK
-      versionMongoDB = await ver.version[0].date;
-      console.log("version MongoDB " + versionMongoDB);
     }
 
     //  versionMongoDB = "";
 
     // récupération de la version IndexedDB
     versionIndexedDB = await getIDBDate();
-    console.log("version IndexedDB " + versionIndexedDB);
+    console.info("version IndexedDB :", versionIndexedDB);
 
     if (versionMongoDB === "") {
       //
@@ -231,7 +239,7 @@
         roadbook[i]._id = roadbook[i].day;
       }
       // mise à jour de la version IndexedDB
-      UpdateIDBversionDate(YYYYMMDD(0));
+      UpdateIDBversionDate(YYYYMMDD(0).date);
     } else if (versionMongoDB >= versionIndexedDB) {
       //
       // versionMongoDB >= versionIndexedDB

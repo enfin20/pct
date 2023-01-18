@@ -8,6 +8,8 @@ export async function get(request) {
     const collection = db.collection("VersionDate");
     const version = await collection.find().toArray();
 
+    console.info("version date:", version);
+
     return {
       status: 200,
       body: {
@@ -32,7 +34,7 @@ export async function post(request) {
     const collection = db.collection("VersionDate");
     const version = JSON.parse(request.body);
 
-    t = await collection.insertOne(version);
+    let t = await collection.insertOne(version);
 
     return {
       status: 200,

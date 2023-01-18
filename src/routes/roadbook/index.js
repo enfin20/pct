@@ -31,7 +31,7 @@ export async function post(request) {
     const collection = db.collection("Roadbook");
     const roadbook = JSON.parse(request.body);
 
-    t = await collection.insertOne(roadbook);
+    let t = await collection.insertOne(roadbook);
 
     return {
       status: 200,

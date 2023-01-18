@@ -116,6 +116,7 @@
         month: month,
       });
       obj._id = new_id;
+      console.info("insert expense:", obj);
     }
 
     // remise à jour du tableau
