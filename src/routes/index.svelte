@@ -206,7 +206,7 @@
       versionMongoDB = "";
     }
 
-    //  versionMongoDB = "";
+    versionMongoDB = "";
 
     // récupération de la version IndexedDB
     versionIndexedDB = await getIDBDate();
