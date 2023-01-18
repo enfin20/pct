@@ -186,6 +186,7 @@
     roadbook = [];
     let IDB_id = "";
     let res = [];
+    let obj = new Object();
 
     try {
       // récupération de la version MongoDB
@@ -374,10 +375,10 @@
       //
       sourceDB = "MDB";
       console.log("IndexedDB --> MongoDB");
-      var obj = new Object();
 
       // récupération de tous les categories
       categories = await getIDBCategories();
+      console.info("Categories:", categories);
       obj = new Object();
       obj._id = 0; // pour supprimer tous les éléments
       res = await fetch("/categories", {
