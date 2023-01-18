@@ -380,21 +380,24 @@
       categories = await getIDBCategories();
       obj = new Object();
       obj._id = 0; // pour supprimer tous les éléments
-      console.info("obj", obj);
-      res = await fetch("/categories", {
-        method: "DELETE",
-        body: JSON.stringify(obj),
-      });
-      for (var i = 0; i < categories.length; i++) {
-        categories[i]._id = categories[i].category;
-        obj = new Object();
-        obj.category = categories[i].category;
-        obj.type = categories[i].type;
-
+      try {
         res = await fetch("/categories", {
-          method: "POST",
+          method: "DELETE",
           body: JSON.stringify(obj),
         });
+        for (var i = 0; i < categories.length; i++) {
+          categories[i]._id = categories[i].category;
+          obj = new Object();
+          obj.category = categories[i].category;
+          obj.type = categories[i].type;
+
+          res = await fetch("/categories", {
+            method: "POST",
+            body: JSON.stringify(obj),
+          });
+        }
+      } catch (error) {
+        erreurMessageRG = error.message;
       }
 
       // récupération de tous les types
