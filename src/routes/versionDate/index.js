@@ -7,7 +7,7 @@ export async function get(request) {
     const db = dbConnection.db;
     const collection = db.collection("VersionDate");
     let version = await collection.find().toArray();
-    version[0].date = "20230116";
+    //    version[0].date = "20230116";
     return {
       status: 200,
       body: {
