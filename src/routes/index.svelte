@@ -383,6 +383,7 @@
         method: "DELETE",
         body: JSON.stringify(obj),
       });
+      erreurMessageRG = res.erreur;
       for (var i = 0; i < categoryTypes.length; i++) {
         categoryTypes[i]._id = categoryTypes[i].type;
         obj = new Object();
