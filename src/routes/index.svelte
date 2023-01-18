@@ -395,6 +395,7 @@
             method: "POST",
             body: JSON.stringify(obj),
           });
+          console.info("res", res);
         }
       } catch (error) {
         erreurMessageRG = error.message;
