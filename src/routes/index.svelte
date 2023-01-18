@@ -380,7 +380,7 @@
       categories = await getIDBCategories();
       obj = new Object();
       obj._id = 0; // pour supprimer tous les éléments
-      console.inf("obj", obj);
+      console.info("obj", obj);
       res = await fetch("/categories", {
         method: "DELETE",
         body: JSON.stringify(obj),
