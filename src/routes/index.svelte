@@ -2,6 +2,7 @@
 </script>
 
 <script>
+  let versions = "";
   let versionMongoDB = "";
   let versionIndexedDB = "";
   let sourceDB = "";
@@ -207,12 +208,22 @@
       versionMongoDB = "";
     }
 
-    //   versionMongoDB = "";
+    //versionMongoDB = "";
 
     // récupération de la version IndexedDB
     versionIndexedDB = await getIDBDate();
     console.info("version IndexedDB :", versionIndexedDB);
-
+    versions =
+      "MDB: " +
+      versionMongoDB
+        .substring(6, 8)
+        .concat("/")
+        .concat(versionMongoDB.substring(4, 6)) +
+      ", IDB: " +
+      versionIndexedDB
+        .substring(6, 8)
+        .concat("/")
+        .concat(versionIndexedDB.substring(4, 6));
     if (versionMongoDB === "") {
       //
       // pas de réseau, on prend IndexedDB
@@ -748,6 +759,7 @@
 <p class="text-center text-xl font-bold text-white bg-red-600">
   {erreurMessageRG}
 </p>
+
 <div class="grid grid-cols-5 text-xs md:text-base bg-pct rounded py-2 ">
   <div>
     <button
@@ -800,6 +812,9 @@
     </button>
   </div>
 </div>
+<p class="text-xs text-right text-white bg-pct">
+  {versions}
+</p>
 
 <div class={expensesVisible}>
   <div class="py-2 w-full">

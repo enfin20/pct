@@ -34,7 +34,7 @@ export async function post(request) {
 
     expenses.amount = Double(expenses.amount);
     let t = await collection.insertOne(expenses);
-    console.log("insert " + expenses._id);
+
     return {
       status: 200,
       body: {
