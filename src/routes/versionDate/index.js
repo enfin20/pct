@@ -1,13 +1,13 @@
 import { connectToDatabase } from "$lib/db";
-import { Double, ObjectId } from "mongodb";
+import { ObjectId } from "mongodb";
 
 export async function get(request) {
   try {
     const dbConnection = await connectToDatabase();
     const db = dbConnection.db;
     const collection = db.collection("VersionDate");
-    const version = await collection.find().toArray();
-
+    let version = await collection.find().toArray();
+    version[0].date = "20230116";
     return {
       status: 200,
       body: {
