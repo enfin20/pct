@@ -189,24 +189,11 @@
     let res = [];
     let obj = new Object();
 
-    try {
-      // récupération de la version MongoDB
-      res = await fetch("/versionDate");
-      const ver = await res.json();
-      console.info("ver :", ver);
-      if (res.status === 500) {
-        // réseau KO
-        versionMongoDB = "";
-        //        erreurMessageRG = "synchData (versionDate) : " + ver.erreur;
-        erreurMessageRG = "Pas de connexion à la base";
-      } else {
-        // réseau OK
-        versionMongoDB = await ver.version[0].date;
-        console.info("version MongoDB :", versionMongoDB);
-      }
-    } catch {
-      versionMongoDB = "";
-    }
+    // récupération de la version MongoDB
+    res = await fetch("/versionDate");
+    const ver = await res.json();
+    versionMongoDB = await ver.versionDate.concat("");
+    console.info("version MongoDB :", versionMongoDB);
 
     //versionMongoDB = "";
 

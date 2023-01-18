@@ -2,23 +2,25 @@ import { connectToDatabase } from "$lib/db";
 import { ObjectId } from "mongodb";
 
 export async function get(request) {
+  let versionDate = "";
   try {
     const dbConnection = await connectToDatabase();
     const db = dbConnection.db;
     const collection = db.collection("VersionDate");
     let version = await collection.find().toArray();
-    version[0].date = "20230112";
+
+    versionDate = version[0].date; //= "20230112";
     return {
       status: 200,
       body: {
-        version,
+        versionDate,
       },
     };
   } catch (err) {
     return {
-      status: 500,
+      status: 200,
       body: {
-        erreur: err.message,
+        versionDate,
       },
     };
   }
