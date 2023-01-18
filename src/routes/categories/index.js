@@ -88,6 +88,7 @@ export async function del(request) {
     const db = dbConnection.db;
     const collection = db.collection("Categories");
     const category = JSON.parse(request.body);
+    console.info("category._id", category._id);
     if (category._id != 0) {
       await collection.deleteOne({ _id: ObjectId(category._id) });
     } else {

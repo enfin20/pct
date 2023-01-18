@@ -378,7 +378,6 @@
 
       // récupération de tous les categories
       categories = await getIDBCategories();
-      console.info("Categories:", categories);
       obj = new Object();
       obj._id = 0; // pour supprimer tous les éléments
       res = await fetch("/categories", {
