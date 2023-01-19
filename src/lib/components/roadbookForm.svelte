@@ -100,7 +100,6 @@
   }
 
   function cleanForm() {
-    console.log("clean form");
     edit_Day._id = "";
     buttonLabel = "Add";
     edit_Day.day = "";
@@ -116,19 +115,18 @@
     updateIcons();
   }
 
-  export async function editDay(r_id) {
-    console.log("r_id:", r_id);
+  export async function editDay(day) {
     if (sourceDB === "MDB") {
       // recupération depuis MongoDB
-      let res = await fetch("/roadbook/day?id=" + r_id);
+      let res = await fetch("/roadbook/day?day=" + day);
       const rday = await res.json();
       edit_Day = await rday.r_day;
-      console.info("edit_Day:", edit_Day);
+      edit_Day._id = edit_Day.day;
     } else {
       // recupération depuis IndexedDB
-      edit_Day = await IDB.Roadbook.where({ day: r_id }).first();
+      edit_Day = await IDB.Roadbook.where({ day: day }).first();
     }
-    edit_Day._id = r_id;
+    edit_Day._id = edit_Day.day;
     edit_Day.day = [
       edit_Day.day.substring(0, 4),
       edit_Day.day.substring(4, 6),

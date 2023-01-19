@@ -195,7 +195,8 @@
     versionMongoDB = await ver.versionDate.concat("");
     console.info("version MongoDB :", versionMongoDB);
 
-    //versionMongoDB = "";
+    //   versionMongoDB = "20230112";
+    //   versionMongoDB = "";
 
     // récupération de la version IndexedDB
     versionIndexedDB = await getIDBDate();
@@ -219,7 +220,7 @@
       // VersionDate : IDB
       //
       sourceDB = "IDB";
-      console.log("IndexedDB");
+      versions = versions + ", IDB";
 
       categoryTypes = await getIDBTypes();
       for (var i = 0; i < categoryTypes.length; i++) {
@@ -247,7 +248,7 @@
       // VersionDate : MDB
       //
       sourceDB = "MDB";
-      console.log("MongoDB --> IndexedDB");
+      versions = versions + ", MDB --> IDB";
 
       // récupération de tous les types
       res = await fetch("/categoryTypes");
@@ -334,6 +335,7 @@
         roadbook = await road.roadbook;
         IDB.Roadbook.clear();
         for (var i = 0; i < roadbook.length; i++) {
+          roadbook[i]._id = roadbook[i].day;
           try {
             IDB_id = await IDB.Roadbook.add({
               day: roadbook[i].day,
@@ -372,7 +374,7 @@
       // VersionDate : MDB
       //
       sourceDB = "MDB";
-      console.log("IndexedDB --> MongoDB");
+      versions = versions + ", IDB --> MDB";
 
       // récupération de tous les categories
       categories = await getIDBCategories();
@@ -747,6 +749,9 @@
   {erreurMessageRG}
 </p>
 
+<p class="text-xs text-right text-pct">
+  {versions}
+</p>
 <div class="grid grid-cols-5 text-xs md:text-base bg-pct rounded py-2 ">
   <div>
     <button
@@ -799,9 +804,6 @@
     </button>
   </div>
 </div>
-<p class="text-xs text-right text-white bg-pct">
-  {versions}
-</p>
 
 <div class={expensesVisible}>
   <div class="py-2 w-full">

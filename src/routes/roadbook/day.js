@@ -3,12 +3,12 @@ import { ObjectId } from "mongodb";
 
 export async function get(request) {
   try {
-    const r_id = request.query.get("id");
-    console.log("r_id " + r_id);
+    const day = request.query.get("day");
+    console.log("day " + day);
     const dbConnection = await connectToDatabase();
     const db = dbConnection.db;
     const collection = db.collection("Roadbook");
-    const r_day = await collection.findOne({ _id: ObjectId(r_id) });
+    const r_day = await collection.findOne({ day: day });
     console.info("r_day:", r_day);
     return {
       status: 200,
@@ -60,10 +60,9 @@ export async function put(request) {
     const collection = db.collection("Roadbook");
 
     await collection.updateOne(
-      { _id: ObjectId(roadbook._id) },
+      { day: roadbook.day },
       {
         $set: {
-          day: roadbook.day,
           start: roadbook.start,
           end: roadbook.end,
           weather: roadbook.weather,
