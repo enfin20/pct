@@ -296,9 +296,7 @@
               class="select-none cursor-pointer  py-1 px-1 font-bold text-slate-400 transition-colors duration-200 ease-in-out  "
             >
               <img
-                src="https://www.orientsport.fr/oflash/img/{wi}{imgNewWeatherActivate[
-                  i
-                ]}.png"
+                src="/images/{wi}{imgNewWeatherActivate[i]}.png"
                 alt=""
                 class="w-[35px] inline"
               /></label
@@ -329,9 +327,7 @@
               class="select-none cursor-pointer py-1 px-1 font-bold text-slate-400 transition-colors duration-200 ease-in-out "
             >
               <img
-                src="https://www.orientsport.fr/oflash/img/{di}{imgNewDifficultyActivate[
-                  i
-                ]}.png"
+                src="/images/{di}{imgNewDifficultyActivate[i]}.png"
                 alt=""
                 class="w-[40px] inline"
               /></label
@@ -360,9 +356,7 @@
               class="select-none cursor-pointer py-1 px-1 font-bold text-slate-400 transition-colors duration-200 ease-in-out "
             >
               <img
-                src="https://www.orientsport.fr/oflash/img/{ni}{imgNewNightActivate[
-                  i
-                ]}.png"
+                src="/images/{ni}{imgNewNightActivate[i]}.png"
                 alt=""
                 class="w-[40px] inline"
               /></label
@@ -393,9 +387,7 @@
               class="select-none cursor-pointer py-1 px-1 font-bold text-slate-400 transition-colors duration-200 ease-in-out "
             >
               <img
-                src="https://www.orientsport.fr/oflash/img/{si}{imgNewLandscapeActivate[
-                  i
-                ]}.png"
+                src="/images/{si}{imgNewLandscapeActivate[i]}.png"
                 alt=""
                 class="w-[40px] inline"
               /></label
@@ -448,9 +440,7 @@
           </td>
           <td class="text-left align-middle py-1 px-1 ">
             <img
-              src="https://www.orientsport.fr/oflash/img/{weatherIcon[
-                r.weather
-              ]}.png"
+              src="/images/{weatherIcon[r.weather]}.png"
               alt=""
               class="w-[30px] inline"
             />
@@ -460,34 +450,26 @@
               {#if i === 0}
                 {#if r.difficulty === 0}
                   <img
-                    src="https://www.orientsport.fr/oflash/img/{difficultyIcon[
-                      i
-                    ]}.png"
+                    src="/images/{difficultyIcon[i]}.png"
                     alt=""
                     class="w-[20px] md:w-[30px] inline"
                   />
                 {:else}
                   <img
-                    src="https://www.orientsport.fr/oflash/img/{difficultyIcon[
-                      i
-                    ]}_in.png"
+                    src="/images/{difficultyIcon[i]}_in.png"
                     alt=""
                     class="w-[20px] md:w-[30px] inline"
                   />
                 {/if}
               {:else if r.difficulty >= i}
                 <img
-                  src="https://www.orientsport.fr/oflash/img/{difficultyIcon[
-                    i
-                  ]}.png"
+                  src="/images/{difficultyIcon[i]}.png"
                   alt=""
                   class="w-[20px] md:w-[30px] inline"
                 />
               {:else}
                 <img
-                  src="https://www.orientsport.fr/oflash/img/{difficultyIcon[
-                    i
-                  ]}_in.png"
+                  src="/images/{difficultyIcon[i]}_in.png"
                   alt=""
                   class="w-[20px] md:w-[30px] inline"
                 />
@@ -496,9 +478,7 @@
           </td>
           <td class="text-left align-middle py-1 px-1 ">
             <img
-              src="https://www.orientsport.fr/oflash/img/{nightIcon[
-                r.night
-              ]}.png"
+              src="/images/{nightIcon[r.night]}.png"
               alt=""
               class="w-[30px] inline"
             />
@@ -507,13 +487,13 @@
             {#each starsIcon as si, i}
               {#if r.landscape >= i}
                 <img
-                  src="https://www.orientsport.fr/oflash/img/{starsIcon[0]}.png"
+                  src="/images/{starsIcon[0]}.png"
                   alt=""
                   class="w-[20px] md:w-[30px] inline"
                 />
               {:else}
                 <img
-                  src="https://www.orientsport.fr/oflash/img/{starsIcon[0]}_in.png"
+                  src="/images/{starsIcon[0]}_in.png"
                   alt=""
                   class="w-[20px] md:w-[30px] inline"
                 />

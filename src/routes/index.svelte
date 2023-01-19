@@ -838,7 +838,7 @@
           >
             <img
               class={classImgType[i]}
-              src="https://www.orientsport.fr/oflash/img/{e.type}.png"
+              src="/images/{e.type}.png"
               alt={e.type}
             />$ {e.amount}
           </label>

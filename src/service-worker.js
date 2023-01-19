@@ -1,5 +1,6 @@
 import { build, files } from "$service-worker";
 // Create a unique cache name for this deployment
+/*
 const IMG_FOLDER = "https://www.orientsport.fr/oflash/img/";
 const ICONS = [
   IMG_FOLDER + "Snow.png",
@@ -38,12 +39,12 @@ const ICONS = [
   IMG_FOLDER + "Sante.png",
   IMG_FOLDER + "Transport.png",
 ];
+*/
 
-const CACHE = `cache-pct-v2`;
+const CACHE = `cache-pct-v3`;
 const ASSETS = [
   ...build, // the app itself
   ...files, // everything in `static`
-  ...ICONS,
 ];
 self.addEventListener("install", (event) => {
   // Create a new cache and add all files to it
