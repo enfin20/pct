@@ -1,0 +1,176 @@
+<script context="module">
+</script>
+
+<script>
+  let new_type = "";
+  import { sourceDB, updatedDB, currentDB } from "$lib/stores/versions.js";
+  import { onMount } from "svelte";
+  import { IDB, getIDBTypes } from "$lib/IDB.js";
+  let erreurMessageRG = "";
+  let categoryTypes = [];
+
+  onMount(async (promise) => {
+    let res = [];
+    //initialisation du tableau en fonction de la source
+    if ($sourceDB === "IDB") {
+      categoryTypes = await getIDBTypes();
+    }
+    if ($sourceDB === "MDB") {
+      res = await fetch("/MDB/categoryTypes");
+      const typ = await res.json();
+      categoryTypes = await typ.categoryTypes;
+    }
+
+    // Mise à jour de l'autre base
+    if ($updatedDB === "IDB") {
+      let IDB_key = "";
+      IDB.Types.clear();
+      for (var i = 0; i < categoryTypes.length; i++) {
+        IDB_key = await IDB.Types.add({
+          type: categoryTypes[i].type,
+        });
+      }
+    }
+    if ($updatedDB === "MDB") {
+      var obj = new Object();
+      obj.key = "ALL"; // pour supprimer tous les éléments
+      let res = await fetch("/MDB/categoryTypes", {
+        method: "DELETE",
+        body: JSON.stringify(obj),
+      });
+      for (var i = 0; i < categoryTypes.length; i++) {
+        res = await fetch("/MDB/categoryTypes", {
+          method: "POST",
+          body: JSON.stringify(categoryTypes[i].type),
+        });
+      }
+    }
+  });
+
+  export async function updateType(key, type) {
+    var obj = new Object();
+    obj.key = key;
+    obj.type = type;
+    if ($currentDB === "IDB") {
+      IDB.Types.update(key, {
+        type: type,
+      });
+    }
+    if ($currentDB === "MDB") {
+      const res = await fetch("/MDB/categoryTypes", {
+        method: "PUT",
+        body: JSON.stringify(obj),
+      });
+    }
+  }
+
+  export async function deleteType(key) {
+    var obj = new Object();
+    obj.key = key;
+    if ($currentDB === "IDB") {
+      IDB.Types.delete(key);
+    }
+    if ($currentDB === "MDB") {
+      const res = await fetch("/MDB/categoryTypes", {
+        method: "DELETE",
+        body: JSON.stringify(obj),
+      });
+    }
+    // remise à jour du tableau
+    let remove_elt = "";
+    for (var i = 0; i < categoryTypes.length; i++) {
+      if (categoryTypes[i].key === key) {
+        remove_elt = i;
+      }
+    }
+    const deleted = categoryTypes.splice(remove_elt, 1);
+    categoryTypes = categoryTypes;
+  }
+
+  export async function insertType(type) {
+    let new_key = "";
+    var obj = new Object();
+    obj.type = type;
+    if ($currentDB === "IDB") {
+      new_key = await IDB.Types.add({
+        type: type,
+      });
+      obj.key = new_key;
+    }
+    if ($currentDB === "MDB") {
+      const res = await fetch("/MDB/categoryTypes", {
+        method: "POST",
+        body: JSON.stringify(type),
+      });
+      new_key = await res.json();
+      obj.key = new_key.message;
+    }
+    // remise à jour du tableau
+    categoryTypes.unshift(obj);
+    categoryTypes = categoryTypes;
+    new_type = "";
+  }
+</script>
+
+<div class="py-2 grid gap-1">
+  <p class="text-2xl font-bold text-gray-800 md:text-xl">Types</p>
+
+  <div class="flex flex-col h-screen">
+    <div class="flex-grow overflow-y-auto">
+      <table id="CategoriesListe" class="text-sm text-gray-500 w-full relative">
+        <thead>
+          <tr>
+            <th class="w-[90%] sticky top-0 bg-white">Type</th>
+          </tr>
+        </thead>
+        <tbody class="">
+          <tr
+            class="align-middle text-center border-collapse border-t-[1px] border-slate-200"
+          >
+            <td class="text-left align-middle py-1 px-1 w-[90%]">
+              <input
+                type="text"
+                bind:value={new_type}
+                class=" appearance-none border-2 border-gray-200 rounded w-full py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
+              />
+            </td>
+            <td class="align-middle py-1 px-1 w-[10%]">
+              <button
+                class="bg-green-600 hover:bg-green-800 text-white py-1 px-1 rounded"
+                on:click={insertType(new_type)}
+                >Add
+              </button>
+            </td>
+          </tr>
+          {#each categoryTypes as t}
+            <tr
+              class="align-middle text-center border-collapse border-t-[1px] border-slate-200"
+            >
+              <td class="text-left align-middle py-1 px-1 w-[90%]">
+                <input
+                  type="text"
+                  bind:value={t.type}
+                  class="appearance-none border-2 border-gray-200 rounded w-full py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
+                />
+              </td>
+              <td class="align-middle py-1 px-1 w-[5%]">
+                <button
+                  class="bg-green-400 hover:bg-green-600 text-gray-500 py-1 px-1 rounded"
+                  id={t.key}
+                  on:click={updateType(t.key, t.type)}>Update</button
+                >
+              </td>
+              <td class="align-middle py-1 px-1 w-[5%]">
+                <button
+                  class="bg-red-400 hover:bg-red-600 text-gray-500 py-1 px-1 rounded"
+                  id={t.key}
+                  on:click={deleteType(t.key)}>Delete</button
+                >
+              </td>
+            </tr>
+          {/each}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

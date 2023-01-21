@@ -1,6 +1,6 @@
 module.exports = {
   mode: "jit",
-  content: ["./src/**/*.svelte" /* ... */],
+  content: ["./src/**/*.{html,js,svelte,ts}"],
   variants: {
     extend: {
       visibility: ["group-hover"],

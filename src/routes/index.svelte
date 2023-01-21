@@ -2,10 +2,34 @@
 </script>
 
 <script>
-  let versions = "";
+  import {
+    versions,
+    sourceDB,
+    updatedDB,
+    currentDB,
+  } from "$lib/stores/versions.js";
+  import {
+    getIDBCategories,
+    getIDBExpenses,
+    getIDBTypes,
+    getIDBDate,
+    UpdateIDBversionDate,
+  } from "$lib/IDB.js";
+  import { YYYYMMDD } from "$lib/date_functions.js";
+  import { onMount } from "svelte";
+  import chartjs from "chart.js/auto";
+
+  // variables globales
+  let version = "";
   let versionMongoDB = "";
   let versionIndexedDB = "";
-  let sourceDB = "";
+
+  // variables pour le dashboard
+  var expensesType = [];
+  let top5 = [];
+  let expenses = [];
+  let categoryTypes = [];
+  let categories = [];
 
   let showMonth = [
     true,
@@ -33,16 +57,6 @@
     "w-1/2 inline",
     "w-1/2 inline",
   ];
-  let dashboardVisible = "flex";
-  let expensesVisible = "hidden";
-  let categoriesVisible = "hidden";
-  let typesVisible = "hidden";
-  let roadbookVisible = "hidden";
-  let expenses = [];
-  let categories = [];
-  let categoryTypes = [];
-  let roadbook = [];
-  let top5 = [];
 
   const CHART_COLORS = {
     red: "rgb(255, 99, 132)",
@@ -68,7 +82,6 @@
     "rgb(255, 99, 132)",
   ];
 
-  let erreurMessageRG = "";
   let months = [
     "OCT",
     "NOV",
@@ -84,8 +97,6 @@
     "SEP",
   ];
 
-  var expensesType = [];
-
   let chartExpensesType;
   let chartExpensesCategoryType_0;
   let chartExpensesCategoryType_1;
@@ -94,7 +105,6 @@
   let chartExpensesCategoryType_4;
   let chartExpensesCategoryType_5;
   let chartExpensesCategoryType_6;
-  let chartExpensesCategoryType_7;
 
   let ctxExpensesType;
   let ctxExpensesCategoryType_0;
@@ -104,7 +114,6 @@
   let ctxExpensesCategoryType_4;
   let ctxExpensesCategoryType_5;
   let ctxExpensesCategoryType_6;
-  let ctxExpensesCategoryType_7;
 
   var chartExpensesTypeData = [];
   var chartExpensesCategoryTypeData_0 = [];
@@ -114,29 +123,10 @@
   var chartExpensesCategoryTypeData_4 = [];
   var chartExpensesCategoryTypeData_5 = [];
   var chartExpensesCategoryTypeData_6 = [];
-  var chartExpensesCategoryTypeData_7 = [];
-
-  import ExpensesForm from "/src/lib/components/expensesForm.svelte";
-  import CategoriesForm from "/src/lib/components/categoriesForm.svelte";
-  import TypesForm from "/src/lib/components/typesForm.svelte";
-  import RoadbookForm from "/src/lib/components/roadbookForm.svelte";
-  import chartjs from "chart.js/auto";
-
-  import {
-    IDB,
-    getIDBDate,
-    getIDBTypes,
-    getIDBCategories,
-    getIDBExpenses,
-    getIDBRoadbook,
-    UpdateIDBversionDate,
-  } from "/src/lib/IDB.js";
-  import { YYYYMMDD } from "/src/lib/date_functions.js";
-
-  import { onMount } from "svelte";
 
   onMount(async (promise) => {
-    synchData();
+    loadVersion();
+
     ctxExpensesType = chartExpensesType.getContext("2d");
     chartExpensesTypeData = new chartjs(ctxExpensesType, {});
 
@@ -177,31 +167,17 @@
     );
   });
 
-  export async function synchData() {
-    //
-    // synchronisation des data entre MongoDB et IndexedDB
-    //
-    categoryTypes = [];
-    categories = [];
-    expenses = [];
-    roadbook = [];
-    let IDB_id = "";
-    let res = [];
-    let obj = new Object();
-
-    // récupération de la version MongoDB
-    res = await fetch("/versionDate");
-    const ver = await res.json();
-    versionMongoDB = await ver.versionDate.concat("");
-    console.info("version MongoDB :", versionMongoDB);
-
-    //   versionMongoDB = "20230112";
-    //   versionMongoDB = "";
-
+  async function loadVersion() {
     // récupération de la version IndexedDB
     versionIndexedDB = await getIDBDate();
-    console.info("version IndexedDB :", versionIndexedDB);
-    versions =
+    // récupération de la version MongoDB
+    let res = await fetch("/MDB/versionDate");
+    const ver = await res.json();
+    versionMongoDB = await ver.versionDate.concat("");
+    //versionMongoDB = "20230112";
+    //versionMongoDB = "";
+
+    version =
       "MDB: " +
       versionMongoDB
         .substring(6, 8)
@@ -212,275 +188,66 @@
         .substring(6, 8)
         .concat("/")
         .concat(versionIndexedDB.substring(4, 6));
+
     if (versionMongoDB === "") {
-      //
-      // pas de réseau, on prend IndexedDB
-      // refresh     : No
-      // data        : IDB
-      // VersionDate : IDB
-      //
-      sourceDB = "IDB";
-      versions = versions + ", IDB";
-
-      categoryTypes = await getIDBTypes();
-      for (var i = 0; i < categoryTypes.length; i++) {
-        categoryTypes[i]._id = categoryTypes[i].type;
-      }
-      categories = await getIDBCategories();
-      for (var i = 0; i < categories.length; i++) {
-        categories[i]._id = categories[i].category;
-      }
-      expenses = await getIDBExpenses();
-      for (var i = 0; i < expenses.length; i++) {
-        expenses[i]._id = expenses[i].id;
-      }
-      roadbook = await getIDBRoadbook();
-      for (var i = 0; i < roadbook.length; i++) {
-        roadbook[i]._id = roadbook[i].day;
-      }
-      // mise à jour de la version IndexedDB
-      UpdateIDBversionDate(YYYYMMDD(0).date);
-    } else if (versionMongoDB >= versionIndexedDB) {
-      //
-      // versionMongoDB >= versionIndexedDB
-      // refresh     : IDB
-      // data        : MDB
-      // VersionDate : MDB
-      //
-      sourceDB = "MDB";
-      versions = versions + ", MDB --> IDB";
-
-      // récupération de tous les types
-      res = await fetch("/categoryTypes");
-      const typ = await res.json();
-      if (res.status === 500) {
-        // réseau KO
-        erreurMessageRG = "synchData (categoryTypes) : " + typ.erreur;
-      } else {
-        // réseau OK
-        categoryTypes = await typ.categoryTypes;
-
-        // mise à jour de IndexedDB
-
-        IDB.Types.clear();
-        for (var i = 0; i < categoryTypes.length; i++) {
-          try {
-            IDB_id = await IDB.Types.add({
-              type: categoryTypes[i].type,
-            });
-          } catch (error) {
-            erreurMessageRG = "synchData (categoryTypes) : " + error.message;
-          }
-        }
-      }
-
-      // récupération de toutes les categories
-      res = await fetch("/categories");
-      const cat = await res.json();
-      if (res.status === 500) {
-        // réseau KO
-        erreurMessageRG = "synchData (categories) : " + cat.erreur;
-      } else {
-        // réseau OK
-        categories = await cat.categories;
-        // mise à jour de IndexedDB
-        IDB.Categories.clear();
-        for (var i = 0; i < categories.length; i++) {
-          try {
-            IDB_id = await IDB.Categories.add({
-              category: categories[i].category,
-              type: categories[i].type,
-            });
-          } catch (error) {
-            erreurMessageRG =
-              "synchData (categories) : " + IDB_id + " " + error.message;
-          }
-        }
-      }
-
-      // récupération de toutes les dépenses
-      res = await fetch("/expenses");
-      const tra = await res.json();
-      if (res.status === 500) {
-        // réseau KO
-        erreurMessageRG = "synchData (expenses) : " + tra.erreur;
-      } else {
-        // réseau OK
-        expenses = await tra.expenses;
-        // mise à jour de IndexedDB
-        IDB.Expenses.clear();
-        for (var i = 0; i < expenses.length; i++) {
-          try {
-            IDB_id = await IDB.Expenses.add({
-              _id: expenses[i]._id,
-              amount: expenses[i].amount,
-              description: expenses[i].description,
-              category: expenses[i].category,
-              month: expenses[i].month,
-            });
-          } catch (error) {
-            erreurMessageRG = "synchData (expenses) : " + error.message;
-          }
-        }
-      }
-
-      // récupération du roadbook
-      res = await fetch("/roadbook");
-      const road = await res.json();
-      if (res.status === 500) {
-        // réseau KO
-        erreurMessageRG = "synchData (roadbook) : " + road.erreur;
-      } else {
-        // réseau OK
-        roadbook = await road.roadbook;
-        IDB.Roadbook.clear();
-        for (var i = 0; i < roadbook.length; i++) {
-          roadbook[i]._id = roadbook[i].day;
-          try {
-            IDB_id = await IDB.Roadbook.add({
-              day: roadbook[i].day,
-              difficulty: roadbook[i].difficulty,
-              night: roadbook[i].night,
-              landscape: roadbook[i].landscape,
-              weather: roadbook[i].weather,
-              detail: roadbook[i].detail,
-              start: roadbook[i].start,
-              end: roadbook[i].end,
-            });
-          } catch (error) {
-            erreurMessageRG = "synchData (roadbook) : " + error.message;
-          }
-        }
-      }
-
-      // mise à jour de la version IndexedDB
-      UpdateIDBversionDate(versionMongoDB);
-
-      // mise à jour de la version MongoDB
-      res = await fetch("/versionDate", {
-        method: "DELETE",
-      });
-      obj = new Object();
-      obj.date = YYYYMMDD(0).date;
-      res = await fetch("/versionDate", {
-        method: "POST",
-        body: JSON.stringify(obj),
-      });
+      sourceDB.set("IDB");
+      updatedDB.set("");
+      currentDB.set("IDB");
     } else {
-      //
-      // versionIndexedDB >= versionMongoDB
-      // refresh     : MDB
-      // data        : MDB
-      // VersionDate : MDB
-      //
-      sourceDB = "MDB";
-      versions = versions + ", IDB --> MDB";
-
-      // récupération de tous les categories
-      categories = await getIDBCategories();
-      obj = new Object();
-      obj._id = 0; // pour supprimer tous les éléments
-      try {
-        res = await fetch("/categories", {
-          method: "DELETE",
-          body: JSON.stringify(obj),
-        });
-        for (var i = 0; i < categories.length; i++) {
-          categories[i]._id = categories[i].category;
-          obj = new Object();
-          obj.category = categories[i].category;
-          obj.type = categories[i].type;
-
-          res = await fetch("/categories", {
-            method: "POST",
-            body: JSON.stringify(obj),
-          });
-        }
-      } catch (error) {
-        erreurMessageRG = error.message;
+      if (versionMongoDB >= versionIndexedDB) {
+        sourceDB.set("MDB");
+        updatedDB.set("IDB");
+        currentDB.set("MDB");
+      } else {
+        sourceDB.set("IDB");
+        updatedDB.set("MDB");
+        currentDB.set("MDB");
       }
+    }
+    versions.set(version);
 
-      // récupération de tous les types
-      categoryTypes = await getIDBTypes();
-      obj = new Object();
-      obj._id = 0; // pour supprimer tous les éléments
-      res = await fetch("/categoryTypes", {
-        method: "DELETE",
-        body: JSON.stringify(obj),
-      });
-      for (var i = 0; i < categoryTypes.length; i++) {
-        categoryTypes[i]._id = categoryTypes[i].type;
-        obj = new Object();
-        obj.type = categoryTypes[i].type;
-
-        res = await fetch("/categoryTypes", {
-          method: "POST",
-          body: JSON.stringify(obj),
-        });
-      }
-
-      // récupération de tous les expenses
-      expenses = await getIDBExpenses();
-      obj = new Object();
-      obj._id = 0; // pour supprimer tous les éléments
-      res = await fetch("/expenses", {
-        method: "DELETE",
-        body: JSON.stringify(obj),
-      });
-      for (var i = 0; i < expenses.length; i++) {
-        expenses[i]._id = expenses[i].id;
-        obj = new Object();
-        obj.category = expenses[i].category;
-        obj.month = expenses[i].month;
-        obj.amount = expenses[i].amount;
-        obj.description = expenses[i].description;
-
-        res = await fetch("/expenses", {
-          method: "POST",
-          body: JSON.stringify(obj),
-        });
-      }
-
-      // récupération de roadbook
-      roadbook = await getIDBRoadbook();
-      obj = new Object();
-      obj._id = 0; // pour supprimer tous les éléments
-      res = await fetch("/roadbook", {
-        method: "DELETE",
-        body: JSON.stringify(obj),
-      });
-      for (var i = 0; i < roadbook.length; i++) {
-        roadbook[i]._id = roadbook[i].day;
-        obj = new Object();
-        obj.difficulty = roadbook[i].difficulty;
-        obj.night = roadbook[i].night;
-        obj.landscape = roadbook[i].landscape;
-        obj.weather = roadbook[i].weather;
-        obj.detail = roadbook[i].detail;
-        obj.day = roadbook[i].day;
-        obj.start = roadbook[i].start;
-        obj.end = roadbook[i].end;
-        res = await fetch("/roadbook", {
-          method: "POST",
-          body: JSON.stringify(obj),
-        });
-      }
-
-      // mise à jour de la version MongoDB
-      res = await fetch("/versionDate", {
+    //mise à jour de la version date
+    if ($currentDB === "IDB") {
+      UpdateIDBversionDate(YYYYMMDD(0).date);
+    }
+    if ($currentDB === "MDB") {
+      res = await fetch("/MDB/versionDate", {
         method: "DELETE",
       });
-      obj = new Object();
-      obj.date = YYYYMMDD(0).date;
-      res = await fetch("/versionDate", {
+      res = await fetch("/MDB/versionDate", {
         method: "POST",
-        body: JSON.stringify(obj),
+        body: JSON.stringify({ date: YYYYMMDD(0).date }),
       });
+    }
+    loadData();
+  }
+
+  async function loadData() {
+    categoryTypes = [];
+    categories = [];
+    expenses = [];
+
+    // récupération des expenses et types
+    if ($sourceDB === "IDB") {
+      expenses = await getIDBExpenses();
+      categoryTypes = await getIDBTypes();
+      categories = await getIDBCategories();
+    }
+    if ($sourceDB === "MDB") {
+      let res = await fetch("/MDB/expenses");
+      const exp = await res.json();
+      expenses = await exp.expenses;
+      res = await fetch("/MDB/categoryTypes");
+      const typ = await res.json();
+      categoryTypes = await typ.categoryTypes;
+      res = await fetch("/MDB/categories");
+      const cat = await res.json();
+      categories = await cat.categories;
     }
     showDashboard();
   }
 
-  export async function showDashboard() {
+  async function showDashboard() {
     ///////////////////////////////////////////
     // construction du pivot
     ///////////////////////////////////////////
@@ -701,236 +468,91 @@
       data: datasetExpensesCategoryType[6],
       options: optionsCategoryType[6],
     });
-
-    dashboardVisible = "flex";
-    categoriesVisible = "hidden";
-    typesVisible = "hidden";
-    expensesVisible = "hidden";
-    roadbookVisible = "hidden";
-  }
-
-  export async function showExpenses() {
-    dashboardVisible = "hidden";
-    categoriesVisible = "hidden";
-    typesVisible = "hidden";
-    expensesVisible = "flex";
-    roadbookVisible = "hidden";
-  }
-
-  export async function showCategories() {
-    dashboardVisible = "hidden";
-    categoriesVisible = "flex";
-    expensesVisible = "hidden";
-    typesVisible = "hidden";
-    roadbookVisible = "hidden";
-  }
-
-  export async function showTypes() {
-    dashboardVisible = "hidden";
-    categoriesVisible = "hidden";
-    expensesVisible = "hidden";
-    typesVisible = "flex";
-    roadbookVisible = "hidden";
-  }
-
-  export async function showRoadbook() {
-    dashboardVisible = "hidden";
-    categoriesVisible = "hidden";
-    expensesVisible = "hidden";
-    typesVisible = "hidden";
-    roadbookVisible = "flex";
   }
 </script>
 
-<svelte:head>
-  <title>Pacific Crest Trail</title>
-</svelte:head>
-<p class="text-center text-xl font-bold text-white bg-red-600">
-  {erreurMessageRG}
-</p>
-
-<p class="text-xs text-right text-pct">
-  {versions}
-</p>
-<div class="grid grid-cols-5 text-xs md:text-base bg-pct rounded py-2 ">
-  <div>
-    <button
-      type="submit"
-      name="s2"
-      class=" px-3 py-2 flex items-center uppercase font-bold leading-snug text-white hover:opacity-75"
-      on:click={showDashboard}
-    >
-      PCT</button
-    >
+<div class="py-2 w-full text-pct font-bold ">
+  <div class="grid grid-cols-4 md:grid-cols-9 place-content-center">
+    <div class="hidden md:grid" />
+    {#each expensesType as e, i}
+      <div>
+        <input
+          id="type-me{i}"
+          class="peer hidden"
+          type="checkbox"
+          bind:checked={showType[i]}
+          on:change={showDashboard}
+        />
+        <label
+          for="type-me{i}"
+          class="select-none cursor-pointer 
+          py-1 px-1 font-bold text-slate-400 transition-colors duration-200 ease-in-out  peer-checked:text-pct "
+        >
+          <img
+            class={classImgType[i]}
+            src="/images/{e.type}.png"
+            alt={e.type}
+          />$ {e.amount}
+        </label>
+      </div>
+    {/each}
   </div>
-  <div>
-    <button
-      type="submit"
-      name="s"
-      class=" px-3 py-2 flex items-center uppercase font-bold leading-snug text-white hover:opacity-75"
-      on:click={showExpenses}
-    >
-      Expenses
-    </button>
-  </div>
-  <div>
-    <button
-      type="submit"
-      name="s"
-      class=" px-3 py-2 flex items-center uppercase font-bold leading-snug text-white hover:opacity-75"
-      on:click={showCategories}
-    >
-      Cat.
-    </button>
-  </div>
-  <div>
-    <button
-      type="submit"
-      name="s"
-      class=" px-3 py-2 flex items-center uppercase font-bold leading-snug text-white hover:opacity-75"
-      on:click={showTypes}
-    >
-      Types
-    </button>
-  </div>
-  <div>
-    <button
-      type="submit"
-      name="s"
-      class=" px-3 py-2 flex items-center uppercase font-bold leading-snug text-white hover:opacity-75"
-      on:click={showRoadbook}
-    >
-      Roadbook
-    </button>
-  </div>
-</div>
-
-<div class={expensesVisible}>
-  <div class="py-2 w-full">
-    <div class="flex mb-2 text-gray-500 font-bold">
-      <ExpensesForm
-        {expenses}
-        {categories}
-        {sourceDB}
-        on:showExpenses={showExpenses}
-      />
+  <div class="grid grid-cols-1 place-content-center mt-10 ">
+    <div class="border-solid hover:border-dotted border-2 rounded mr-1">
+      <canvas bind:this={chartExpensesType} id="ExpensesType" />
     </div>
   </div>
-</div>
-
-<div class={dashboardVisible}>
-  <div class="py-2 w-full text-pct font-bold ">
-    <div class="grid grid-cols-4 md:grid-cols-9 place-content-center">
-      <div class="hidden md:grid" />
-      {#each expensesType as e, i}
-        <div>
-          <input
-            id="type-me{i}"
-            class="peer hidden"
-            type="checkbox"
-            bind:checked={showType[i]}
-            on:change={showDashboard}
-          />
-          <label
-            for="type-me{i}"
-            class="select-none cursor-pointer 
-            py-1 px-1 font-bold text-slate-400 transition-colors duration-200 ease-in-out  peer-checked:text-pct "
-          >
-            <img
-              class={classImgType[i]}
-              src="/images/{e.type}.png"
-              alt={e.type}
-            />$ {e.amount}
-          </label>
-        </div>
-      {/each}
-    </div>
-    <div class="grid grid-cols-1 place-content-center mt-10 ">
-      <div class="border-solid hover:border-dotted border-2 rounded mr-1">
-        <canvas bind:this={chartExpensesType} id="ExpensesType" />
+  <div class="grid grid-cols-6 md:grid-cols-12 place-content-center mt-10">
+    {#each months as m, i}
+      <div>
+        <input
+          id="choose-me{i}"
+          class="peer hidden"
+          type="checkbox"
+          bind:checked={showMonth[i]}
+          on:change={showDashboard}
+        />
+        <label
+          for="choose-me{i}"
+          class="select-none cursor-pointer rounded-lg border-2 border-blue-100
+          py-0 md:py-3 px-6 text-xs md:text-base font-bold text-blue-100 transition-colors duration-200 ease-in-out peer-checked:bg-blue-100 peer-checked:text-gray-700 peer-checked:border-blue-100 "
+        >
+          {m}
+        </label>
       </div>
-    </div>
-    <div class="grid grid-cols-6 md:grid-cols-12 place-content-center mt-10">
-      {#each months as m, i}
-        <div>
-          <input
-            id="choose-me{i}"
-            class="peer hidden"
-            type="checkbox"
-            bind:checked={showMonth[i]}
-            on:change={showDashboard}
-          />
-          <label
-            for="choose-me{i}"
-            class="select-none cursor-pointer rounded-lg border-2 border-blue-100
-            py-0 md:py-3 px-6 text-xs md:text-base font-bold text-blue-100 transition-colors duration-200 ease-in-out peer-checked:bg-blue-100 peer-checked:text-gray-700 peer-checked:border-blue-100 "
-          >
-            {m}
-          </label>
-        </div>
-      {/each}
-    </div>
-    <div class="grid grid-cols-2 md:grid-cols-4 place-content-center mt-5">
-      <div class="border-solid hover:border-dotted border-2 rounded mr-1 mt-1">
-        <canvas bind:this={chartExpensesCategoryType_0} />
-      </div>
-      <div class="border-solid hover:border-dotted border-2 rounded mr-1 mt-1">
-        <canvas bind:this={chartExpensesCategoryType_1} />
-      </div>
-      <div class="border-solid hover:border-dotted border-2 rounded mr-1 mt-1">
-        <canvas bind:this={chartExpensesCategoryType_2} />
-      </div>
-      <div class="border-solid hover:border-dotted border-2 rounded mr-1 mt-1">
-        <canvas bind:this={chartExpensesCategoryType_3} />
-      </div>
-      <div class="border-solid hover:border-dotted border-2 rounded mr-1 mt-1">
-        <canvas bind:this={chartExpensesCategoryType_4} />
-      </div>
-      <div class="border-solid hover:border-dotted border-2 rounded mr-1 mt-1">
-        <canvas bind:this={chartExpensesCategoryType_5} />
-      </div>
-      <div class="border-solid hover:border-dotted border-2 rounded mr-1 mt-1">
-        <canvas bind:this={chartExpensesCategoryType_6} />
-      </div>
-      <div class="border-solid hover:border-dotted border-2 rounded mr-1 mt-1">
-        TOP 5<br /><br />
-        <div class="grid grid-cols-3 text-xs md:text-sm">
-          {#each top5 as t}
-            <div>{t.description}</div>
-            <div />
-            <div>{t.amount}</div>
-          {/each}
-        </div>
-      </div>
-    </div>
+    {/each}
   </div>
-</div>
-
-<div class={categoriesVisible}>
-  <div class="py-2 w-full">
-    <div class="flex mb-2 text-gray-500 font-bold">
-      <CategoriesForm
-        {categories}
-        {categoryTypes}
-        {sourceDB}
-        on:showCategories={showCategories}
-      />
+  <div class="grid grid-cols-2 md:grid-cols-4 place-content-center mt-5">
+    <div class="border-solid hover:border-dotted border-2 rounded mr-1 mt-1">
+      <canvas bind:this={chartExpensesCategoryType_0} />
     </div>
-  </div>
-</div>
-
-<div class={typesVisible}>
-  <div class="py-2 w-full">
-    <div class="flex mb-2 text-gray-500 font-bold">
-      <TypesForm {categoryTypes} {sourceDB} on:showTypes={showTypes} />
+    <div class="border-solid hover:border-dotted border-2 rounded mr-1 mt-1">
+      <canvas bind:this={chartExpensesCategoryType_1} />
     </div>
-  </div>
-</div>
-
-<div class={roadbookVisible}>
-  <div class="py-2 w-full">
-    <div class="flex mb-2 text-gray-500 font-bold">
-      <RoadbookForm {roadbook} {sourceDB} on:showRoadbook={showRoadbook} />
+    <div class="border-solid hover:border-dotted border-2 rounded mr-1 mt-1">
+      <canvas bind:this={chartExpensesCategoryType_2} />
+    </div>
+    <div class="border-solid hover:border-dotted border-2 rounded mr-1 mt-1">
+      <canvas bind:this={chartExpensesCategoryType_3} />
+    </div>
+    <div class="border-solid hover:border-dotted border-2 rounded mr-1 mt-1">
+      <canvas bind:this={chartExpensesCategoryType_4} />
+    </div>
+    <div class="border-solid hover:border-dotted border-2 rounded mr-1 mt-1">
+      <canvas bind:this={chartExpensesCategoryType_5} />
+    </div>
+    <div class="border-solid hover:border-dotted border-2 rounded mr-1 mt-1">
+      <canvas bind:this={chartExpensesCategoryType_6} />
+    </div>
+    <div class="border-solid hover:border-dotted border-2 rounded mr-1 mt-1">
+      TOP 5<br /><br />
+      <div class="grid grid-cols-3 text-xs md:text-sm">
+        {#each top5 as t}
+          <div>{t.description}</div>
+          <div />
+          <div>{t.amount}</div>
+        {/each}
+      </div>
     </div>
   </div>
 </div>

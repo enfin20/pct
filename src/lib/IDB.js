@@ -35,19 +35,35 @@ async function initIDBDate() {
 }
 
 export async function getIDBTypes() {
-  return await IDB.Types.toArray();
+  const categoryTypes = await IDB.Types.toArray();
+  for (var i = 0; i < categoryTypes.length; i++) {
+    categoryTypes[i].key = categoryTypes[i].type;
+  }
+  return await categoryTypes;
 }
 
 export async function getIDBCategories() {
-  return await IDB.Categories.toArray();
+  const categories = await IDB.Categories.toArray();
+  for (var i = 0; i < categories.length; i++) {
+    categories[i].key = categories[i].category;
+  }
+  return await categories;
 }
 
 export async function getIDBExpenses() {
-  return await IDB.Expenses.toArray();
+  const expenses = await IDB.Expenses.toArray();
+  for (var i = 0; i < expenses.length; i++) {
+    expenses[i].key = expenses[i].id;
+  }
+  return await expenses;
 }
 
 export async function getIDBRoadbook() {
-  return await IDB.Roadbook.toArray();
+  const roadbook = await IDB.Roadbook.toArray();
+  for (var i = 0; i < roadbook.length; i++) {
+    roadbook[i].key = roadbook[i].day;
+  }
+  return await roadbook;
 }
 
 export async function UpdateIDBversionDate(versionDate) {
