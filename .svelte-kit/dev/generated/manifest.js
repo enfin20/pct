@@ -5,7 +5,9 @@ const c = [
 	() => import("..\\..\\..\\src\\routes\\categoryTypes\\index.svelte"),
 	() => import("..\\..\\..\\src\\routes\\categories\\index.svelte"),
 	() => import("..\\..\\..\\src\\routes\\expenses\\index.svelte"),
-	() => import("..\\..\\..\\src\\routes\\roadbook\\index.svelte")
+	() => import("..\\..\\..\\src\\routes\\roadbook\\index.svelte"),
+	() => import("..\\..\\..\\src\\routes\\suivi\\__layout.reset.svelte"),
+	() => import("..\\..\\..\\src\\routes\\suivi\\index.svelte")
 ];
 
 const d = decodeURIComponent;
@@ -25,6 +27,9 @@ export const routes = [
 
 	// src/routes/roadbook/index.svelte
 	[/^\/roadbook\/?$/, [c[0], c[6]], [c[1]]],
+
+	// src/routes/suivi/index.svelte
+	[/^\/suivi\/?$/, [c[7], c[8]], []],
 
 	,
 

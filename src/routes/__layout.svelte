@@ -8,11 +8,11 @@
 </script>
 
 <nav>
-  <p class="text-xs text-right text-pct">
+  <p class="text-xs text-right text-pct px-2">
     {$versions}
     {$sourceDB} > {$updatedDB} : {$currentDB}
   </p>
-  <div class="grid grid-cols-5 text-xs md:text-base bg-pct rounded py-2 ">
+  <div class="grid grid-cols-5 text-xs md:text-base bg-pct px-2 py-2 ">
     <div>
       <a
         href="/"
@@ -55,7 +55,7 @@
     </div>
   </div>
 </nav>
-<div class="py-2 w-full">
+<div class="px-2 py-2 w-full">
   <div class="flex mb-2 text-gray-500 font-bold">
     <slot />
   </div>

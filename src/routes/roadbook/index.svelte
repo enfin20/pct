@@ -15,6 +15,7 @@
   edit_Day.night = -1;
   edit_Day.landscape = -1;
   edit_Day.detail = "";
+  edit_Day.summary = "";
 
   let weatherIcon = [
     "Snow",
@@ -59,15 +60,16 @@
     // Mise à jour de l'autre base
     if ($updatedDB === "IDB") {
       let IDB_key = "";
-      IDB.roadbook.clear();
+      IDB.Roadbook.clear();
       for (var i = 0; i < roadbook.length; i++) {
-        IDB_id = await IDB.Roadbook.add({
+        IDB_key = await IDB.Roadbook.add({
           day: roadbook[i].day,
           difficulty: roadbook[i].difficulty,
           night: roadbook[i].night,
           landscape: roadbook[i].landscape,
           weather: roadbook[i].weather,
           detail: roadbook[i].detail,
+          summary: roadbook[i].summary,
           start: roadbook[i].start,
           end: roadbook[i].end,
         });
@@ -89,6 +91,7 @@
         obj.landscape = roadbook[i].landscape;
         obj.weather = roadbook[i].weather;
         obj.detail = roadbook[i].detail;
+        obj.summary = roadbook[i].summary;
         obj.start = roadbook[i].start;
         obj.end = roadbook[i].end;
         res = await fetch("/MDB/roadbook", {
@@ -151,6 +154,7 @@
     edit_Day.night = -1;
     edit_Day.landscape = -1;
     edit_Day.detail = "";
+    edit_Day.summary = "";
 
     buttonLabel = "Add";
     updateIcons();
@@ -202,6 +206,7 @@
           night: Number(edit_Day.night),
           landscape: Number(edit_Day.landscape),
           detail: edit_Day.detail,
+          summary: edit_Day.summary,
           start: edit_Day.start,
           end: edit_Day.end,
         });
@@ -227,6 +232,7 @@
         night: edit_Day.night,
         landscape: edit_Day.landscape,
         detail: edit_Day.detail,
+        summary: edit_Day.summary,
       });
       roadbook = roadbook;
     } else {
@@ -238,6 +244,7 @@
           night: Number(edit_Day.night),
           landscape: Number(edit_Day.landscape),
           detail: edit_Day.detail,
+          summary: edit_Day.summary,
           start: edit_Day.start,
           end: edit_Day.end,
         });
@@ -256,6 +263,7 @@
           roadbook[i].night = Number(edit_Day.night);
           roadbook[i].landscape = Number(edit_Day.landscape);
           roadbook[i].detail = edit_Day.detail;
+          roadbook[i].summary = edit_Day.summary;
           roadbook[i].start = edit_Day.start;
           roadbook[i].end = edit_Day.end;
         }
@@ -433,6 +441,19 @@
         </div>
       </div>
       <div class="flex flex-wrap -mx-3 mb-2">
+        <div class="w-full px-3 mb-6 md:mb-0">
+          <label
+            class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+            for="grid-first-name"
+          >
+            Summary
+          </label>
+          <textarea
+            bind:value={edit_Day.summary}
+            class=" w-full appearance-none border-2 border-gray-200 rounded py-2 px-4 text-gray-700 leading-tight focus:outline-none"
+            rows="5"
+          />
+        </div>
         <div class="w-full px-3 mb-6 md:mb-0">
           <label
             class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"

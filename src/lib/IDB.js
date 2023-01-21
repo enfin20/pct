@@ -1,12 +1,13 @@
 import Dexie from "dexie";
 
-export const IDB = new Dexie("pct");
+export const IDB = new Dexie("pct23");
 
 IDB.version(1).stores({
   Types: "type",
   Categories: "category, type",
-  Expenses: "_id, amount, description, category, month",
-  Roadbook: "day, difficulty, night, landscape, weather, detail, start, end",
+  Expenses: "++id, amount, description, category, month",
+  Roadbook:
+    "day, difficulty, night, landscape, weather, detail, start, end, summary",
   VersionDate: "++id, date",
 });
 

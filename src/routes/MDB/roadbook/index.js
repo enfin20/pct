@@ -69,6 +69,7 @@ export async function put(request) {
           night: roadbook.night,
           landscape: roadbook.landscape,
           detail: roadbook.detail,
+          summary: roadbook.summary,
         },
       }
     );
