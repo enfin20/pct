@@ -68,6 +68,7 @@ export async function put(request) {
           difficulty: roadbook.difficulty,
           night: roadbook.night,
           landscape: roadbook.landscape,
+          mood: roadbook.mood,
           detail: roadbook.detail,
           summary: roadbook.summary,
         },

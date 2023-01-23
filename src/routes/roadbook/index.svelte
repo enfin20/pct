@@ -14,6 +14,7 @@
   edit_Day.difficulty = -1;
   edit_Day.night = -1;
   edit_Day.landscape = -1;
+  edit_Day.mood = -1;
   edit_Day.detail = "";
   edit_Day.summary = "";
 
@@ -27,7 +28,6 @@
     "SemiSun",
     "Sun",
   ];
-  let nightIcon = ["Star", "Bivouac", "Camp", "Hotel", "Free"];
   let imgNewWeatherActivate = [
     "_in",
     "_in",
@@ -38,11 +38,14 @@
     "_in",
     "_in",
   ];
-  let difficultyIcon = ["ZeroDay", "Star", "Star", "Star"];
-  let starsIcon = ["Star", "Star", "Star"];
-  let imgNewDifficultyActivate = ["_in", "_in", "_in", "_in"];
+  let nightIcon = ["Star", "Bivouac", "Camp", "Hotel", "Free"];
   let imgNewNightActivate = ["_in", "_in", "_in", "_in", "_in"];
+  let difficultyIcon = ["ZeroDay", "Star", "Star", "Star"];
+  let imgNewDifficultyActivate = ["_in", "_in", "_in", "_in"];
+  let starsIcon = ["Star", "Star", "Star"];
   let imgNewLandscapeActivate = ["_in", "_in", "_in"];
+  let moodIcon = ["Sad", "Neutral", "Happy"];
+  let imgNewMoodActivate = ["_in", "_in", "_in"];
   // _in rgb(200,225,200)
 
   onMount(async (promise) => {
@@ -67,6 +70,7 @@
           difficulty: roadbook[i].difficulty,
           night: roadbook[i].night,
           landscape: roadbook[i].landscape,
+          mood: roadbook[i].mood,
           weather: roadbook[i].weather,
           detail: roadbook[i].detail,
           summary: roadbook[i].summary,
@@ -89,6 +93,7 @@
         obj.difficulty = roadbook[i].difficulty;
         obj.night = roadbook[i].night;
         obj.landscape = roadbook[i].landscape;
+        obj.mood = roadbook[i].mood;
         obj.weather = roadbook[i].weather;
         obj.detail = roadbook[i].detail;
         obj.summary = roadbook[i].summary;
@@ -141,6 +146,14 @@
         imgNewLandscapeActivate[i] = "_in";
       }
     }
+
+    for (var i = 0; i < moodIcon.length; i++) {
+      if (edit_Day.mood === i) {
+        imgNewMoodActivate[i] = "";
+      } else {
+        imgNewMoodActivate[i] = "_in";
+      }
+    }
   }
 
   function cleanForm() {
@@ -153,6 +166,7 @@
     edit_Day.difficulty = -1;
     edit_Day.night = -1;
     edit_Day.landscape = -1;
+    edit_Day.mood = -1;
     edit_Day.detail = "";
     edit_Day.summary = "";
 
@@ -195,6 +209,7 @@
     edit_Day.difficulty = Number(edit_Day.difficulty);
     edit_Day.night = Number(edit_Day.night);
     edit_Day.landscape = Number(edit_Day.landscape);
+    edit_Day.mood = Number(edit_Day.mood);
 
     if (edit_Day.key === "") {
       // Insert new day
@@ -205,6 +220,7 @@
           difficulty: Number(edit_Day.difficulty),
           night: Number(edit_Day.night),
           landscape: Number(edit_Day.landscape),
+          mood: Number(edit_Day.mood),
           detail: edit_Day.detail,
           summary: edit_Day.summary,
           start: edit_Day.start,
@@ -231,6 +247,7 @@
         difficulty: edit_Day.difficulty,
         night: edit_Day.night,
         landscape: edit_Day.landscape,
+        mood: edit_Day.mood,
         detail: edit_Day.detail,
         summary: edit_Day.summary,
       });
@@ -243,6 +260,7 @@
           difficulty: Number(edit_Day.difficulty),
           night: Number(edit_Day.night),
           landscape: Number(edit_Day.landscape),
+          mood: Number(edit_Day.mood),
           detail: edit_Day.detail,
           summary: edit_Day.summary,
           start: edit_Day.start,
@@ -262,6 +280,7 @@
           roadbook[i].difficulty = Number(edit_Day.difficulty);
           roadbook[i].night = Number(edit_Day.night);
           roadbook[i].landscape = Number(edit_Day.landscape);
+          roadbook[i].mood = Number(edit_Day.mood);
           roadbook[i].detail = edit_Day.detail;
           roadbook[i].summary = edit_Day.summary;
           roadbook[i].start = edit_Day.start;
@@ -410,7 +429,7 @@
         </div>
       </div>
       <div class="flex flex-wrap -mx-3 mb-2">
-        <div class="w-full px-3 mb-6 md:mb-0">
+        <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
           <label
             class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
             for="grid-first-name"
@@ -433,6 +452,36 @@
             >
               <img
                 src="/images/{si}{imgNewLandscapeActivate[i]}.png"
+                alt=""
+                class="w-[40px] inline"
+              /></label
+            >
+          {/each}
+        </div>
+
+        <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+          <label
+            class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+            for="grid-first-name"
+          >
+            Mood
+          </label>
+          {#each moodIcon as mi, i}
+            <input
+              type="radio"
+              bind:group={edit_Day.mood}
+              name="mood"
+              value={i}
+              id="r_mood{i}"
+              class="peer hidden"
+              on:change={updateIcons}
+            />
+            <label
+              for="r_mood{i}"
+              class="select-none cursor-pointer py-1 px-1 font-bold text-slate-400 transition-colors duration-200 ease-in-out "
+            >
+              <img
+                src="/images/{mi}{imgNewMoodActivate[i]}.png"
                 alt=""
                 class="w-[40px] inline"
               /></label
@@ -498,6 +547,13 @@
           </td>
           <td class="text-left align-middle py-1 px-1 ">
             <img
+              src="/images/{moodIcon[r.mood]}.png"
+              alt=""
+              class="w-[30px] inline"
+            />
+          </td>
+          <td class="text-left align-middle py-1 px-1 ">
+            <img
               src="/images/{weatherIcon[r.weather]}.png"
               alt=""
               class="w-[30px] inline"
@@ -558,7 +614,7 @@
               {/if}
             {/each}
           </td>
-          <td class="align-middle py-1 px-1 w-[5%]">
+          <td class="align-middle py-1 px-1 ">
             <button
               class="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               id={r.key}

@@ -7,7 +7,7 @@ IDB.version(1).stores({
   Categories: "category, type",
   Expenses: "++id, amount, description, category, month",
   Roadbook:
-    "day, difficulty, night, landscape, weather, detail, start, end, summary",
+    "day, difficulty, night, landscape, weather, detail, start, end, summary, mood",
   VersionDate: "++id, date",
 });
 
