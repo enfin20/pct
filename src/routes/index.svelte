@@ -96,6 +96,7 @@
     "AUG",
     "SEP",
   ];
+  let erreurMessage = "";
 
   let chartExpensesType;
   let chartExpensesCategoryType_0;
@@ -170,6 +171,11 @@
   async function loadVersion() {
     // récupération de la version IndexedDB
     versionIndexedDB = await getIDBDate();
+    console.info("vidb", versionIndexedDB.substring(0, 11));
+    if (versionIndexedDB.substring(0, 11) === "initIDBDate") {
+      erreurMessage = versionIndexedDB;
+      versionIndexedDB = "20230102";
+    }
     // récupération de la version MongoDB
     let res = await fetch("/MDB/versionDate");
     const ver = await res.json();
@@ -471,7 +477,11 @@
   }
 </script>
 
-<div class="py-2 w-full text-pct font-bold ">
+<div>
+  <div class="py-2 w-full font-bold text-red-500 text-xs text-right">
+    {erreurMessage}
+  </div>
+
   <div class="grid grid-cols-4 md:grid-cols-9 place-content-center">
     <div class="hidden md:grid" />
     {#each expensesType as e, i}
