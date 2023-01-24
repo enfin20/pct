@@ -33,7 +33,7 @@ async function initIDBDate() {
   } catch (error) {
     erreurMessageRG = "initIDBDate : " + error.message;
   }
-  return erreurMessageRG;
+  return "20230101";
 }
 
 export async function getIDBTypes() {
