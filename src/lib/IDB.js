@@ -25,6 +25,7 @@ export async function getIDBDate() {
 
 async function initIDBDate() {
   // insertion de la première version IndexedDB
+  erreurMessageRG = "20230101";
   try {
     const id = await IDB.VersionDate.add({
       date: "20230101",
@@ -32,7 +33,7 @@ async function initIDBDate() {
   } catch (error) {
     erreurMessageRG = "initIDBDate : " + error.message;
   }
-  return "20230101";
+  return erreurMessageRG;
 }
 
 export async function getIDBTypes() {
