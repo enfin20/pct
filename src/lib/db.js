@@ -36,7 +36,6 @@ export async function connectToDatabase() {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   };
-
   // Connect to cluster
   let client = new MongoClient(MONGODB_URI, opts);
   await client.connect();
@@ -45,7 +44,6 @@ export async function connectToDatabase() {
   // set cache
   cachedClient = client;
   cachedDb = db;
-
   return {
     client: cachedClient,
     db: cachedDb,
