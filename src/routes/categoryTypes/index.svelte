@@ -20,7 +20,7 @@
       const typ = await res.json();
       categoryTypes = await typ.categoryTypes;
     }
-    erreurMessage = "nb : " + categoryTypes.length;
+
     // Mise à jour de l'autre base
     if ($updatedDB === "IDB") {
       let IDB_key = "";
@@ -112,9 +112,6 @@
   }
 </script>
 
-<div class="py-2 font-bold text-red-500 text-xs text-right">
-  {erreurMessage}
-</div>
 <div class="py-2 grid gap-1">
   <p class="text-2xl font-bold text-gray-800 md:text-xl">Types</p>
 

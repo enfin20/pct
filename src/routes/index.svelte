@@ -181,7 +181,7 @@
     const ver = await res.json();
     versionMongoDB = await ver.versionDate.concat("");
     //versionMongoDB = "20230112";
-    versionMongoDB = "";
+    //versionMongoDB = "";
 
     version =
       "MDB: " +
