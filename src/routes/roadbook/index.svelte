@@ -460,14 +460,14 @@
               <img
                 src="/images/{moodIcon[r.mood]}.png"
                 alt=""
-                class="w-[30px] inline"
+                class="w-[25px] md:w-[30px] inline"
               />
             </td>
             <td class="text-left align-middle py-1 px-1 ">
               <img
                 src="/images/{weatherIcon[r.weather]}.png"
                 alt=""
-                class="w-[30px] inline"
+                class="w-[25px] md:w-[30px] inline"
               />
             </td>
             <td class="text-left align-middle py-1 px-1 ">
@@ -477,26 +477,26 @@
                     <img
                       src="/images/{difficultyIcon[i]}.png"
                       alt=""
-                      class="w-[15px] md:w-[30px] inline"
+                      class="w-[20px] md:w-[30px] inline"
                     />
                   {:else}
                     <img
                       src="/images/{difficultyIcon[i]}_in.png"
                       alt=""
-                      class="w-[15px] md:w-[30px] inline"
+                      class="w-[20px] md:w-[30px] inline"
                     />
                   {/if}
                 {:else if r.difficulty >= i}
                   <img
                     src="/images/{difficultyIcon[i]}.png"
                     alt=""
-                    class="w-[15px] md:w-[30px] inline"
+                    class="w-[20px] md:w-[30px] inline"
                   />
                 {:else}
                   <img
                     src="/images/{difficultyIcon[i]}_in.png"
                     alt=""
-                    class="w-[15px] md:w-[30px] inline"
+                    class="w-[20px] md:w-[30px] inline"
                   />
                 {/if}
               {/each}
@@ -505,7 +505,7 @@
               <img
                 src="/images/{nightIcon[r.night]}.png"
                 alt=""
-                class="w-[30px] inline"
+                class="w-[25px] md:w-[30px] inline"
               />
             </td>
             <td class="text-left align-middle py-1 px-1 ">
@@ -514,13 +514,13 @@
                   <img
                     src="/images/{starsIcon[0]}.png"
                     alt=""
-                    class="w-[15px] md:w-[30px] inline"
+                    class="w-[20px] md:w-[30px] inline"
                   />
                 {:else}
                   <img
                     src="/images/{starsIcon[0]}_in.png"
                     alt=""
-                    class="w-[15px] md:w-[30px] inline"
+                    class="w-[20px] md:w-[30px] inline"
                   />
                 {/if}
               {/each}
