@@ -2,27 +2,9 @@
 </script>
 
 <script>
-  import {
-    versions,
-    sourceDB,
-    updatedDB,
-    currentDB,
-  } from "$lib/stores/versions.js";
-  import {
-    getIDBCategories,
-    getIDBExpenses,
-    getIDBTypes,
-    getIDBDate,
-    UpdateIDBversionDate,
-  } from "$lib/IDB.js";
   import { YYYYMMDD } from "$lib/date_functions.js";
   import { onMount } from "svelte";
   import chartjs from "chart.js/auto";
-
-  // variables globales
-  let version = "";
-  let versionMongoDB = "";
-  let versionIndexedDB = "";
 
   // variables pour le dashboard
   var expensesType = [];
@@ -126,7 +108,7 @@
   var chartExpensesCategoryTypeData_6 = [];
 
   onMount(async (promise) => {
-    loadVersion();
+    loadData();
 
     ctxExpensesType = chartExpensesType.getContext("2d");
     chartExpensesTypeData = new chartjs(ctxExpensesType, {});
@@ -167,89 +149,23 @@
       {}
     );
   });
-
-  async function loadVersion() {
-    // récupération de la version IndexedDB
-    versionIndexedDB = await getIDBDate();
-    console.info("vidb", versionIndexedDB.substring(0, 11));
-    if (versionIndexedDB.substring(0, 11) === "initIDBDate") {
-      erreurMessage = versionIndexedDB;
-      versionIndexedDB = "20230102";
-    }
-    // récupération de la version MongoDB
-    let res = await fetch("/MDB/versionDate");
-    const ver = await res.json();
-    versionMongoDB = await ver.versionDate.concat("");
-    //versionMongoDB = "20230112";
-    //versionMongoDB = "";
-
-    version =
-      "MDB: " +
-      versionMongoDB
-        .substring(6, 8)
-        .concat("/")
-        .concat(versionMongoDB.substring(4, 6)) +
-      ", IDB: " +
-      versionIndexedDB
-        .substring(6, 8)
-        .concat("/")
-        .concat(versionIndexedDB.substring(4, 6));
-
-    if (versionMongoDB === "") {
-      sourceDB.set("IDB");
-      updatedDB.set("");
-      currentDB.set("IDB");
-    } else {
-      if (versionMongoDB >= versionIndexedDB) {
-        sourceDB.set("MDB");
-        updatedDB.set("IDB");
-        currentDB.set("MDB");
-      } else {
-        sourceDB.set("IDB");
-        updatedDB.set("MDB");
-        currentDB.set("MDB");
-      }
-    }
-    versions.set(version);
-
-    //mise à jour de la version date
-    if ($currentDB === "IDB") {
-      UpdateIDBversionDate(YYYYMMDD(0).date);
-    }
-    if ($currentDB === "MDB") {
-      res = await fetch("/MDB/versionDate", {
-        method: "DELETE",
-      });
-      res = await fetch("/MDB/versionDate", {
-        method: "POST",
-        body: JSON.stringify({ date: YYYYMMDD(0).date }),
-      });
-    }
-    loadData();
-  }
-
   async function loadData() {
     categoryTypes = [];
     categories = [];
     expenses = [];
 
     // récupération des expenses et types
-    if ($sourceDB === "IDB") {
-      expenses = await getIDBExpenses();
-      categoryTypes = await getIDBTypes();
-      categories = await getIDBCategories();
-    }
-    if ($sourceDB === "MDB") {
-      let res = await fetch("/MDB/expenses");
-      const exp = await res.json();
-      expenses = await exp.expenses;
-      res = await fetch("/MDB/categoryTypes");
-      const typ = await res.json();
-      categoryTypes = await typ.categoryTypes;
-      res = await fetch("/MDB/categories");
-      const cat = await res.json();
-      categories = await cat.categories;
-    }
+
+    let res = await fetch("/MDB/expenses");
+    const exp = await res.json();
+    expenses = await exp.expenses;
+    res = await fetch("/MDB/categoryTypes");
+    const typ = await res.json();
+    categoryTypes = await typ.categoryTypes;
+    res = await fetch("/MDB/categories");
+    const cat = await res.json();
+    categories = await cat.categories;
+
     showDashboard();
   }
 

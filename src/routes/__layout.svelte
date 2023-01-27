@@ -1,17 +1,7 @@
 <script>
-  import {
-    versions,
-    sourceDB,
-    updatedDB,
-    currentDB,
-  } from "$lib/stores/versions.js";
 </script>
 
 <nav>
-  <p class="text-xs text-right text-pct px-2">
-    {$versions}
-    {$sourceDB} > {$updatedDB} : {$currentDB}
-  </p>
   <div class="grid grid-cols-5 text-xs md:text-base bg-pct px-2 py-2 ">
     <div>
       <a

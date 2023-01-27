@@ -1,7 +1,5 @@
 <script>
-  import { sourceDB, updatedDB, currentDB } from "$lib/stores/versions.js";
   import { onMount } from "svelte";
-  import { IDB, getIDBRoadbook } from "$lib/IDB.js";
 
   let roadbook = [];
   var buttonLabel = "Add";
@@ -50,63 +48,9 @@
 
   onMount(async (promise) => {
     let res = [];
-    //initialisation du tableau en fonction de la source
-    if ($sourceDB === "IDB") {
-      roadbook = await getIDBRoadbook();
-    }
-    if ($sourceDB === "MDB") {
-      res = await fetch("/MDB/roadbook");
-      const roa = await res.json();
-      roadbook = await roa.roadbook;
-    }
-
-    // Mise à jour de l'autre base
-    if ($updatedDB === "IDB") {
-      let IDB_key = "";
-      IDB.Roadbook.clear();
-      for (var i = 0; i < roadbook.length; i++) {
-        IDB_key = await IDB.Roadbook.add({
-          day: roadbook[i].day,
-          difficulty: roadbook[i].difficulty,
-          night: roadbook[i].night,
-          landscape: roadbook[i].landscape,
-          mood: roadbook[i].mood,
-          weather: roadbook[i].weather,
-          detail: roadbook[i].detail,
-          summary: roadbook[i].summary,
-          start: roadbook[i].start,
-          end: roadbook[i].end,
-        });
-      }
-    }
-    if ($updatedDB === "MDB") {
-      var obj = new Object();
-      obj.key = "ALL"; // pour supprimer tous les éléments
-      let res = await fetch("/MDB/roadbook", {
-        method: "DELETE",
-        body: JSON.stringify(obj),
-      });
-      let new_id = "";
-      for (var i = 0; i < roadbook.length; i++) {
-        obj = new Object();
-        obj.day = roadbook[i].day;
-        obj.difficulty = roadbook[i].difficulty;
-        obj.night = roadbook[i].night;
-        obj.landscape = roadbook[i].landscape;
-        obj.mood = roadbook[i].mood;
-        obj.weather = roadbook[i].weather;
-        obj.detail = roadbook[i].detail;
-        obj.summary = roadbook[i].summary;
-        obj.start = roadbook[i].start;
-        obj.end = roadbook[i].end;
-        res = await fetch("/MDB/roadbook", {
-          method: "POST",
-          body: JSON.stringify(obj),
-        });
-        new_id = await res.json();
-        roadbook[i].key = roadbook[i].day;
-      }
-    }
+    res = await fetch("/MDB/roadbook");
+    const roa = await res.json();
+    roadbook = await roa.roadbook;
   });
 
   function updateIcons() {
@@ -175,15 +119,10 @@
   }
 
   export async function editDay(day) {
-    if ($currentDB === "IDB") {
-      edit_Day = await IDB.Roadbook.where({ day: day }).first();
-    }
-    if ($currentDB === "MDB") {
-      let res = await fetch("/MDB/roadbook/day?day=" + day);
-      const rday = await res.json();
-      edit_Day = await rday.r_day;
-      edit_Day.key = edit_Day.day;
-    }
+    let res = await fetch("/MDB/roadbook/day?day=" + day);
+    const rday = await res.json();
+    edit_Day = await rday.r_day;
+    edit_Day.key = edit_Day.day;
 
     edit_Day.key = edit_Day.day;
     edit_Day.day = [
@@ -213,29 +152,13 @@
 
     if (edit_Day.key === "") {
       // Insert new day
-      if ($currentDB === "IDB") {
-        new_id = await IDB.Roadbook.add({
-          day: edit_Day.day,
-          weather: Number(edit_Day.weather),
-          difficulty: Number(edit_Day.difficulty),
-          night: Number(edit_Day.night),
-          landscape: Number(edit_Day.landscape),
-          mood: Number(edit_Day.mood),
-          detail: edit_Day.detail,
-          summary: edit_Day.summary,
-          start: edit_Day.start,
-          end: edit_Day.end,
-        });
-        edit_Day.key = edit_Day.day;
-      }
-      if ($currentDB === "MDB") {
-        res = await fetch("/MDB/roadbook", {
-          method: "POST",
-          body: JSON.stringify(edit_Day),
-        });
-        new_id = await res.json();
-        edit_Day.key = edit_Day.day;
-      }
+
+      res = await fetch("/MDB/roadbook", {
+        method: "POST",
+        body: JSON.stringify(edit_Day),
+      });
+      new_id = await res.json();
+      edit_Day.key = edit_Day.day;
 
       // remise à jour du tableau
       roadbook.unshift({
@@ -254,25 +177,12 @@
       roadbook = roadbook;
     } else {
       // update day
-      if ($currentDB === "IDB") {
-        IDB.Roadbook.update(edit_Day.day, {
-          weather: Number(edit_Day.weather),
-          difficulty: Number(edit_Day.difficulty),
-          night: Number(edit_Day.night),
-          landscape: Number(edit_Day.landscape),
-          mood: Number(edit_Day.mood),
-          detail: edit_Day.detail,
-          summary: edit_Day.summary,
-          start: edit_Day.start,
-          end: edit_Day.end,
-        });
-      }
-      if ($currentDB === "MDB") {
-        res = await fetch("/MDB/roadbook", {
-          method: "PUT",
-          body: JSON.stringify(edit_Day),
-        });
-      }
+
+      res = await fetch("/MDB/roadbook", {
+        method: "PUT",
+        body: JSON.stringify(edit_Day),
+      });
+
       //mise à jour du tableau
       for (var i = 0; i < roadbook.length; i++) {
         if (roadbook[i].day === edit_Day.day) {
@@ -296,7 +206,7 @@
   <div class="grid grid-cols-1 place-content-center w-full">
     <form class="w-full " on:submit|preventDefault={insertRoadbook}>
       <div class=" w-full  flex flex-wrap -mx-3 mb-6">
-        <div class="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+        <div class="w-1/3 px-3 mb-6 md:mb-0">
           <label
             class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
             for="grid-first-name"

@@ -4,58 +4,20 @@
 <script>
   let new_category = "";
   let new_type = "";
-  import { sourceDB, updatedDB, currentDB } from "$lib/stores/versions.js";
   import { onMount } from "svelte";
-  import { IDB, getIDBCategories, getIDBTypes } from "$lib/IDB.js";
-  let erreurMessageRG = "";
+
   let categories = [];
   let categoryTypes = [];
 
   onMount(async (promise) => {
     let res = [];
-    //initialisation du tableau en fonction de la source
-    if ($sourceDB === "IDB") {
-      categoryTypes = await getIDBTypes();
-      categories = await getIDBCategories();
-    }
-    if ($sourceDB === "MDB") {
-      res = await fetch("/MDB/categoryTypes");
-      const typ = await res.json();
-      categoryTypes = await typ.categoryTypes;
+    res = await fetch("/MDB/categoryTypes");
+    const typ = await res.json();
+    categoryTypes = await typ.categoryTypes;
 
-      res = await fetch("/MDB/categories");
-      const cat = await res.json();
-      categories = await cat.categories;
-    }
-
-    // Mise à jour de l'autre base
-    if ($updatedDB === "IDB") {
-      let IDB_key = "";
-      IDB.Categories.clear();
-      for (var i = 0; i < categories.length; i++) {
-        IDB_key = await IDB.Categories.add({
-          category: categories[i].category,
-          type: categories[i].type,
-        });
-      }
-    }
-    if ($updatedDB === "MDB") {
-      var obj = new Object();
-      obj.key = "ALL"; // pour supprimer tous les éléments
-      let res = await fetch("/MDB/categories", {
-        method: "DELETE",
-        body: JSON.stringify(obj),
-      });
-      for (var i = 0; i < categories.length; i++) {
-        obj = new Object();
-        obj.category = categories[i].category;
-        obj.type = categories[i].type;
-        res = await fetch("/MDB/categories", {
-          method: "POST",
-          body: JSON.stringify(obj),
-        });
-      }
-    }
+    res = await fetch("/MDB/categories");
+    const cat = await res.json();
+    categories = await cat.categories;
   });
 
   export async function updateCategory(key, category, type) {
@@ -63,29 +25,22 @@
     obj.key = key;
     obj.type = type;
     obj.category = category;
-    if ($currentDB === "IDB") {
-      IDB.Categories.update(key, { category: category, type: type });
-    }
-    if ($currentDB === "MDB") {
-      const res = await fetch("/MDB/categories", {
-        method: "PUT",
-        body: JSON.stringify(obj),
-      });
-    }
+
+    const res = await fetch("/MDB/categories", {
+      method: "PUT",
+      body: JSON.stringify(obj),
+    });
   }
 
   export async function deleteCategory(key) {
     var obj = new Object();
     obj.key = key;
-    if ($currentDB === "IDB") {
-      IDB.Categories.delete(key);
-    }
-    if ($currentDB === "MDB") {
-      const res = await fetch("/MDB/categories", {
-        method: "DELETE",
-        body: JSON.stringify(obj),
-      });
-    }
+
+    const res = await fetch("/MDB/categories", {
+      method: "DELETE",
+      body: JSON.stringify(obj),
+    });
+
     // remise à jour du tableau
     let remove_elt = "";
     for (var i = 0; i < categories.length; i++) {
@@ -93,6 +48,7 @@
         remove_elt = i;
       }
     }
+
     const deleted = categories.splice(remove_elt, 1);
     categories = categories;
   }
@@ -102,18 +58,14 @@
     var obj = new Object();
     obj.category = category;
     obj.type = type;
-    if ($currentDB === "IDB") {
-      new_key = await IDB.Categories.add({ category: category, type: type });
-      obj.key = new_key;
-    }
-    if ($currentDB === "MDB") {
-      const res = await fetch("/MDB/categories", {
-        method: "POST",
-        body: JSON.stringify(obj),
-      });
-      new_key = await res.json();
-      obj.key = new_key.message;
-    }
+
+    const res = await fetch("/MDB/categories", {
+      method: "POST",
+      body: JSON.stringify(obj),
+    });
+    new_key = await res.json();
+    obj.key = new_key.message;
+
     // remise à jour du tableau
     categories.unshift(obj);
     categories = categories;
@@ -123,8 +75,6 @@
 </script>
 
 <div class="py-2 grid gap-1">
-  <p class="text-2xl font-bold text-gray-800 md:text-xl">Categories</p>
-
   <div class="flex flex-col h-screen">
     <div class="flex-grow overflow-y-auto">
       <table id="CategoriesListe" class="text-sm text-gray-500 w-full relative">
