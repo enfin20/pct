@@ -31,17 +31,17 @@
     let res = [];
     //initialisation du tableau en fonction de la source
     if ($sourceDB === "IDB") {
-      expenses = await getIDBExpenses();
       categories = await getIDBCategories();
+      expenses = await getIDBExpenses();
     }
     if ($sourceDB === "MDB") {
-      res = await fetch("/MDB/expenses");
-      const exp = await res.json();
-      expenses = await exp.expenses;
-
       res = await fetch("/MDB/categories");
       const cat = await res.json();
       categories = await cat.categories;
+
+      res = await fetch("/MDB/expenses");
+      const exp = await res.json();
+      expenses = await exp.expenses;
     }
 
     // Mise à jour de l'autre base
@@ -172,7 +172,10 @@
 
   <div class="flex flex-col h-screen">
     <div class="flex-grow overflow-y-auto">
-      <table id="ExpensesListe" class=" text-gray-500 w-full relative">
+      <table
+        id="ExpensesListe"
+        class=" text-gray-500 w-full relative table table-compact"
+      >
         <thead>
           <tr>
             <th class="w-[15%] sticky top-0 bg-white">Month</th>

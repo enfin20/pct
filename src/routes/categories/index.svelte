@@ -15,17 +15,17 @@
     let res = [];
     //initialisation du tableau en fonction de la source
     if ($sourceDB === "IDB") {
-      categories = await getIDBCategories();
       categoryTypes = await getIDBTypes();
+      categories = await getIDBCategories();
     }
     if ($sourceDB === "MDB") {
-      res = await fetch("/MDB/categories");
-      const cat = await res.json();
-      categories = await cat.categories;
-
       res = await fetch("/MDB/categoryTypes");
       const typ = await res.json();
       categoryTypes = await typ.categoryTypes;
+
+      res = await fetch("/MDB/categories");
+      const cat = await res.json();
+      categories = await cat.categories;
     }
 
     // Mise à jour de l'autre base
