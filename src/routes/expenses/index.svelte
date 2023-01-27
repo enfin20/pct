@@ -172,10 +172,7 @@
 
   <div class="flex flex-col h-screen">
     <div class="flex-grow overflow-y-auto">
-      <table
-        id="ExpensesListe"
-        class=" text-gray-500 w-full relative table table-compact bg-white"
-      >
+      <table id="ExpensesListe" class=" text-gray-500 w-full relative ">
         <thead>
           <tr>
             <th class="w-[15%] sticky top-0 bg-white">Month</th>
