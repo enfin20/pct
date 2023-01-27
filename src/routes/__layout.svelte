@@ -60,9 +60,6 @@
     <slot />
   </div>
 </div>
-Footer © 2023 GitHub, Inc. Footer navigation Terms Privacy Security Status Docs Contact
-GitHub Pricing API Training Blog About pct/__layout.svelte at 0edb9082549cc563e1463f446385c4f7a31a44f2
-· enfin20/pct
 
 <style>
   @tailwind base;
