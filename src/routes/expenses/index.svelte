@@ -174,7 +174,7 @@
     <div class="flex-grow overflow-y-auto">
       <table
         id="ExpensesListe"
-        class=" text-gray-500 w-full relative table table-compact"
+        class=" text-gray-500 w-full relative table table-compact bg-white"
       >
         <thead>
           <tr>

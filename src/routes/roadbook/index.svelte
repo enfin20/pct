@@ -537,7 +537,10 @@
     </form>
   </div>
   <div class="overflow-x-auto">
-    <table id="rdb" class="table table-compact w-full text-sm text-gray-500">
+    <table
+      id="rdb"
+      class="table table-compact w-full text-sm text-gray-500 bg-white"
+    >
       <tbody class="">
         {#each roadbook as r}
           <tr

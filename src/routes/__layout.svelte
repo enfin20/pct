@@ -12,7 +12,7 @@
   {$sourceDB} > {$updatedDB} : {$currentDB}
 </p>
 
-<div class="navbar text-xs md:text-base bg-pct text-white  w-full">
+<div class="navbar text-xs md:text-base bg-pct text-white w-full">
   <div class="flex-1">
     <a class="btn btn-ghost text-base md:text-xl" href="/">PCT</a>
   </div>
