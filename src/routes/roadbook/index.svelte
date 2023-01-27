@@ -477,26 +477,26 @@
                     <img
                       src="/images/{difficultyIcon[i]}.png"
                       alt=""
-                      class="w-[20px] md:w-[30px] inline"
+                      class="w-[15px] md:w-[30px] inline"
                     />
                   {:else}
                     <img
                       src="/images/{difficultyIcon[i]}_in.png"
                       alt=""
-                      class="w-[20px] md:w-[30px] inline"
+                      class="w-[15px] md:w-[30px] inline"
                     />
                   {/if}
                 {:else if r.difficulty >= i}
                   <img
                     src="/images/{difficultyIcon[i]}.png"
                     alt=""
-                    class="w-[20px] md:w-[30px] inline"
+                    class="w-[15px] md:w-[30px] inline"
                   />
                 {:else}
                   <img
                     src="/images/{difficultyIcon[i]}_in.png"
                     alt=""
-                    class="w-[20px] md:w-[30px] inline"
+                    class="w-[15px] md:w-[30px] inline"
                   />
                 {/if}
               {/each}
@@ -514,13 +514,13 @@
                   <img
                     src="/images/{starsIcon[0]}.png"
                     alt=""
-                    class="w-[20px] md:w-[30px] inline"
+                    class="w-[15px] md:w-[30px] inline"
                   />
                 {:else}
                   <img
                     src="/images/{starsIcon[0]}_in.png"
                     alt=""
-                    class="w-[20px] md:w-[30px] inline"
+                    class="w-[15px] md:w-[30px] inline"
                   />
                 {/if}
               {/each}
