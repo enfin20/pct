@@ -26,7 +26,7 @@
   </div>
 </div>
 
-<div class="px-2 py-2 w-full">
+<div class="px-2 py-2 w-full bg-white">
   <div class="flex mb-2 text-gray-500 font-bold">
     <slot />
   </div>
