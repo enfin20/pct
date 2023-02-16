@@ -49,11 +49,21 @@
     obj.amount = amount;
     obj.description = description;
     obj.category = category;
+
+    const res = await fetch("/MDB/expenses", {
+      method: "PUT",
+      body: JSON.stringify(obj),
+    });
   }
 
   export async function deleteExpense(key) {
     var obj = new Object();
     obj.key = key;
+
+    const res = await fetch("/MDB/expenses", {
+      method: "DELETE",
+      body: JSON.stringify(obj),
+    });
 
     // remise à jour du tableau
     let remove_elt = "";
