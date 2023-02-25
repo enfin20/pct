@@ -10,6 +10,7 @@
   var expensesType = [];
   let top5 = [];
   let expenses = [];
+  let totalExpenses = 0;
   let categoryTypes = [];
   let categories = [];
 
@@ -187,6 +188,7 @@
         }
       }
       pivot.push(obj);
+      totalExpenses = totalExpenses + Math.trunc(expenses[i].amount);
     }
 
     ///////////////////////////////////////////
@@ -398,8 +400,23 @@
     {erreurMessage}
   </div>
 
-  <div class="grid grid-cols-4 md:grid-cols-9 place-content-center">
+  <div class="grid grid-cols-4 md:grid-cols-10 place-content-center">
     <div class="hidden md:grid" />
+    <div>
+      <input id="type-me" class="peer hidden" type="checkbox" />
+      <label
+        for="type-me"
+        class="select-none cursor-pointer 
+        py-1 px-1 font-bold text-pct transition-colors duration-200 ease-in-out  peer-checked:text-pct "
+      >
+        <img
+          class="w-1/4 md:w-1/2 inline"
+          src="/images/Total.png"
+          alt="Total"
+        />$ {totalExpenses}
+      </label>
+    </div>
+
     {#each expensesType as e, i}
       <div>
         <input
