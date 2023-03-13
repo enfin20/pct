@@ -6,7 +6,7 @@ export async function get(request) {
     const dbConnection = await connectToDatabase();
     const db = dbConnection.db;
     const collection = db.collection("Expenses");
-    const expenses = await collection.find().sort({ month: 1 }).toArray();
+    const expenses = await collection.find().sort({ _id: -1 }).toArray();
     for (var i = 0; i < expenses.length; i++) {
       expenses[i].key = expenses[i]._id;
     }

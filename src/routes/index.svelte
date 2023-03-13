@@ -176,6 +176,7 @@
     ///////////////////////////////////////////
     let pivot = [];
     let obj = new Object();
+    totalExpenses = 0;
     for (var i = 0; i < expenses.length; i++) {
       obj = [];
       obj.amount = expenses[i].amount;
